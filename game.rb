@@ -19,20 +19,26 @@ class Game
     @current_question = [num1, num2]
   end
 
-  def ask_question
-    @current_question = "What does #{current_question[0]} plus #{current_question[1]} equal?"
-  end
-
   def are_lives_gone
     players.any? {|player| player.lives == 0}
   end
-
-  # def run_questions
-  #   until are_lives_gone()
-  #     set_question()
-  #     puts ask_question()
-  #   end
-  # end
+ 
+  def ask_question
+    set_question()
+    puts "What does #{current_question[0]} plus #{current_question[1]} equal?"
+    print "> "
+    evaluate_answer(gets.chomp)
+  end
+  
+  def run_questions
+    until are_lives_gone()
+      players.each do |player, index|
+        ask_question()
+        next_turn()
+      end
+    end
+    game_over()
+  end
 
   def start_game
     puts "Welcome to twO-O player math game! Who will be the first player to join the game?"
