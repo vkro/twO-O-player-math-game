@@ -13,28 +13,36 @@ class Game
     @game_active = true
   end
 
+  def are_lives_gone
+    players.any? {|player| player.lives == 0}
+  end
+
   def set_question 
     num1 = rand(21)
     num2 = rand(21)
     @current_question = [num1, num2]
   end
 
-  def are_lives_gone
-    players.any? {|player| player.lives == 0}
+  def evaluate_answer(answer)
+    answer == current_question[0] + current_question[1]
   end
  
   def ask_question
     set_question()
     puts "What does #{current_question[0]} plus #{current_question[1]} equal?"
     print "> "
-    evaluate_answer(gets.chomp)
+    evaluate_answer(gets.chomp) ? success() : failure()
   end
-  
+
+  def next_turn(index)
+    index < players.length() ? current_player = players[index + 1] : current_player = players[0]
+  end
+
   def run_questions
     until are_lives_gone()
       players.each do |player, index|
         ask_question()
-        next_turn()
+        next_turn(index)
       end
     end
     game_over()
@@ -46,7 +54,7 @@ class Game
     puts "Thanks for joining the game, #{player1.name}? Who else is playing?"
     player2 = Player.new(gets.chomp)
     @players = [player1, player2]
-    
+    @current_player = players[0]
     puts "Thanks for joining the game, #{players[0].name}! Let's get started! \n#{players[1].name}, you're up first.\nHere's your first question:"
   end
 
