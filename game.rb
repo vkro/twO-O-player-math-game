@@ -24,47 +24,55 @@ class Game
   end
 
   def evaluate_answer(answer)
-    answer == current_question[0] + current_question[1]
-  end
- 
-  def ask_question
-    set_question()
-    puts "What does #{current_question[0]} plus #{current_question[1]} equal?"
-    print "> "
-    evaluate_answer(gets.chomp) ? success() : failure()
+    answer.to_i == (current_question[0] + current_question[1])
   end
 
-  def next_turn(index)
-    index < players.length() ? current_player = players[index + 1] : current_player = players[0]
+  def success(index)
+    puts "YES! You are correct."
+  end
+
+  def failure(index)
+    players[index].lose_life()
+    puts "Seriously?! No."
+  end
+ 
+  def ask_question(index)
+    set_question()
+    puts "#{players[index].name}, what does #{current_question[0]} plus #{current_question[1]} equal?"
+    print "> "
+    evaluate_answer(gets.chomp) ? success(index) : failure(index)
+  end
+
+  def determine_winner
+    @players.find_index{|player| player.lives > 0}
+  end
+
+  def game_over
+    winner_index = determine_winner()
+    puts "---------- Game Over ----------\n#{players[winner_index].name} wins with a score of #{players[winner_index].lives}/3!\n-------------------------------\nGoodbye!"
   end
 
   def run_questions
+    first_time = true
     until are_lives_gone()
-      players.each do |player, index|
-        ask_question()
-        next_turn(index)
+      players.each.with_index do |player, index|
+        puts first_time == true ? "Here's your first question:" : "--------- NEW TURN ---------"
+        first_time = false
+        ask_question(index)
       end
     end
-    game_over()
+    game_over
   end
 
   def start_game
     puts "Welcome to twO-O player math game! Who will be the first player to join the game?"
     player1 = Player.new(gets.chomp)
-    puts "Thanks for joining the game, #{player1.name}? Who else is playing?"
+    puts "Thanks for joining the game, #{player1.name}! Who else is playing?"
     player2 = Player.new(gets.chomp)
     @players = [player1, player2]
     @current_player = players[0]
-    puts "Thanks for joining the game, #{players[0].name}! Let's get started! \n#{players[1].name}, you're up first.\nHere's your first question:"
+    puts "Thanks for joining the game, #{players[1].name}! Let's get started... \n#{players[0].name}, you're up first."
+    run_questions()
   end
 
 end
-
-
-def create_game
-  game = Game.new
-end
-
-game = Game.new()
-
-game.start_game
