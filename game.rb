@@ -37,6 +37,7 @@ class Game
     puts "#{players[index].name}, what does #{current_question[0]} plus #{current_question[1]} equal?"
     print "> "
     evaluate_answer(gets.chomp) ? success(index) : failure(index)
+    puts "#{players[0].name}: #{players[0].lives}/3  VS  #{players[1].name}: #{players[1].lives}/3"
   end
 
   def determine_winner
@@ -52,9 +53,13 @@ class Game
     first_time = true
     until are_lives_gone()
       players.each.with_index do |player, index|
-        puts first_time == true ? "Here's your first question:" : "--------- NEW TURN ---------"
-        first_time = false
-        ask_question(index)
+        if (are_lives_gone)
+          break
+        else
+          puts first_time == true ? "Here's your first question:" : "--------- NEW TURN ---------"
+          first_time = false
+          ask_question(index)
+        end
       end
     end
     game_over
