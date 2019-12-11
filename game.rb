@@ -5,12 +5,8 @@ class Game
   attr_accessor :players, :player1, :player2, :current_player, :current_question
 
   def initialize
-    @player1 = ""
-    @player2 = ""
-    @players = [@player1, @player2]
-    @current_player = @player1
+    @players = []
     @current_question = []
-    @game_active = true
   end
 
   def are_lives_gone
